@@ -51,7 +51,9 @@ function [video] = filter_remove_color(video, mode)
     % 4) RETURN 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [bw] = black_white(img)
-                   
+        temp = rgb2hsv(img);
+        % todo: remove coloring
+        return hsv2rgb(temp);
 
     end
     %%    
