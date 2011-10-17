@@ -51,10 +51,12 @@ function [video] = filter_remove_color(video, mode)
     % 4) RETURN 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [bw] = black_white(img)
-        temp = rgb2hsv(img);
-        % todo: remove coloring
-        return hsv2rgb(temp);
-
+        % convert to HSV
+        bw = rgb2hsv(img);
+        % we need to remove Saturation
+        bw(:,:,2) = 0;
+        % convert it back to RGB
+        bw = hsv2rgb(bw);
     end
     %%    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,8 +66,9 @@ function [video] = filter_remove_color(video, mode)
     % 2) RETURN CONVERTED IMAGE 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [sepia] = sepia(img)
-
-        
+        % define SepiaValues
+        values = [0.4 0.769 0.189 ; 0.349 0.686 0.168 ; 0.272 0.534 0.131];
+        % sepia = values * img(:,:,1:3);
     end
 end
 
