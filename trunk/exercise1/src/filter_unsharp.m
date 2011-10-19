@@ -20,7 +20,7 @@
 %
 %   RANGE VALUES FOR PARAMETERS:
 %       .....
-function video = filter_unsharp(video, PARAM1, ...)
-
-
+function video = filter_unsharp(video, filterSize, sigma)
+    filterkernel = fspecial('gaussian', filterSize, sigma);
+    video.frame(1).filtered = imfilter(video.frame(1).filtered, filterkernel,'replicate', 'same', 'conv');
 end
