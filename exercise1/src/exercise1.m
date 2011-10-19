@@ -145,7 +145,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (video.frame(1).frame_nr ~= -1) 
              video      = filter_remove_color(video, 'bw');
-%             video      = filter_unsharp(video, PARAM1, ...);
+             video      = filter_unsharp(video, [5 5], 0.75);
 %             video      = filter_rand_illumination(video, min_brightness, max_brightness);
 %             video      = filter_highcontrast(video, dx, dy);
 %             video      = filter_iris(video, trans_size, dist_x, dist_y, min_size, max_size);
