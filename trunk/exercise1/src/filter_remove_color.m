@@ -53,7 +53,7 @@ function [video] = filter_remove_color(video, mode)
     function [bw] = black_white(img)
         % convert to HSV
         bw = rgb2hsv(img);
-        % we need to remove Saturation
+        % we need to remove Saturation S - thats "channel" 2
         bw(:,:,2) = 0;
         % convert it back to RGB
         bw = hsv2rgb(bw);
@@ -66,9 +66,14 @@ function [video] = filter_remove_color(video, mode)
     % 2) RETURN CONVERTED IMAGE 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [sepia] = sepia(img)
-        % define SepiaValues
-        values = [0.4 0.769 0.189 ; 0.349 0.686 0.168 ; 0.272 0.534 0.131];
-        % sepia = values * img(:,:,1:3);
+        % define SepiaValues 3x3 matrix
+        values = [0.4 0.769 0.189 ; 0.349 0.686 0.168 ; 0.272 0.534 0.131]
+        % get color vectors YxXxRGB
+        colors = [img(:,:,1); img(:,:,2); img(:,:,3)];
+        %test = values * img(:,:,1);
+        %sepia(:,:,2) = values * img(:,:,2);
+        %sepia(:,:,3) = values * img(:,:,3);
+        sepia = img;
     end
 end
 

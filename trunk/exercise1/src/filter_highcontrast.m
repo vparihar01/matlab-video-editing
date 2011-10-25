@@ -23,6 +23,16 @@
 %   RANGE VALUES FOR PARAMETERS:
 %       .....
 function video = filter_highcontrast(video, dx, dy)
-
-
+    % create stepfunction (transferfunction) with dx and dy
+    
+    % convert to HSV colorspace
+    img = rgb2hsv(video.frame(1).filtered);
+    % map intensity(V=VALUE) values to [0..255]
+    img(:,:,3) = img(:,:,3) * 255;
+    % map each intensity value with the stepfunction
+    
+    % convert intensity(HS,V=VALUE) values back again to [0..1]
+    img(:,:,3) = img(:,:,3) / 255;
+    % convert the image back to RGB colorspace
+    video.frame(1).filtered = hsv2rgb(img);
 end
