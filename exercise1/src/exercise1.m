@@ -149,7 +149,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
              video      = filter_rand_illumination(video, 0.5, 0.9);
              video      = filter_highcontrast(video, 0.2, 0.2);
 %             video      = filter_iris(video, trans_size, dist_x, dist_y, min_size, max_size);
-%             video      = filter_low_framerate(video, source_fps, dest_fps);
+             video      = filter_low_framerate(video, 25, 12);
         end
         
         
