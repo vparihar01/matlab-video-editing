@@ -30,6 +30,53 @@
 %   RANGE VALUES FOR PARAMETERS:
 %       .....
 function video = filter_iris(video, transition_size, min_size, max_size, dist_x, dist_y);   
+    % create a distance map, with distances from the center of the iris
+    [dist_map,maxDist] = distance_map(size(video.frame(1).filtered,1),size(video.frame(1).filtered,2), dist_x, dist_y);
+    
+    % calculate distances from iris center to the start and end of the transition area
+    iris_size = 0;    
+    while (iris_size < min_size || iris_size > max_size)
+        iris_size = rand;
+    end
+    
+    iris_pixelRadius = (iris_size * size(dist_map,2))/2;
+    clearViewDist = iris_pixelRadius - transition_size;
+    
+    % create a brightness map
+    bri_map = brightness_map(dist_map, (iris_pixelRadius/maxDist), (clearViewDist/maxDist));
+   
+    % apply brightness map to frame
+    video.frame(1).filtered(:,:,1) = video.frame(1).filtered(:,:,1) .* bri_map;
+    video.frame(1).filtered(:,:,2) = video.frame(1).filtered(:,:,2) .* bri_map;
+    video.frame(1).filtered(:,:,3) = video.frame(1).filtered(:,:,3) .* bri_map;
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % CREATE A DISTANCE MAP
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    function [map, maxDist] = distance_map(height, width, dist_x, dist_y)
+        map = zeros(height,width);
+        map((height/2)+dist_y,(width/2)+dist_x) = 1;
+        dist = bwdist(map);
+        maxDist = max(dist(:));
+        map = dist/maxDist;
+    end
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % CREATE A BRIGHTNESS MAP
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    function [map] = brightness_map(dist_map, iris_size, clearView_size)
 
+        white = (dist_map <= clearView_size);
+        map = (dist_map <= iris_size) - white;
+        indices = find(map > 0);
+        temp = (-1/(iris_size-clearView_size));
+        
+        for j=1:size(indices)
+            map(indices(j)) = 1 + temp*(dist_map(indices(j))-clearView_size);
+            disp(map(indices(j)));
+        end
+        
+        map = map + white;
+    end
+    
 end
