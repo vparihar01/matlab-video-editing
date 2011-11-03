@@ -67,13 +67,35 @@ function [video] = filter_remove_color(video, mode)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [sepia] = sepia(img)
         % define SepiaValues 3x3 matrix
-        values = [0.4 0.769 0.189 ; 0.349 0.686 0.168 ; 0.272 0.534 0.131]
+        values = [0.4 0.769 0.189 ; 0.349 0.686 0.168 ; 0.272 0.534 0.131];
         % get color vectors YxXxRGB
-        colors = [img(:,:,1); img(:,:,2); img(:,:,3)];
-        %test = values * img(:,:,1);
-        %sepia(:,:,2) = values * img(:,:,2);
-        %sepia(:,:,3) = values * img(:,:,3);
-        sepia = img;
+        red = img(:,:,1);
+        red = red(:);
+        green = img(:,:,2);
+        green = green(:);
+        blue = img(:,:,3);
+        blue = blue(:);
+        colors = zeros(3,size(red));
+        colors(1,:) = red; 
+        colors(2,:) = green; 
+        colors(3,:) = blue;
+        
+        % calculate sepia colors
+        temp = values*colors(:,1:size(colors,2));
+        
+        % get calculated colors back into rgb matrix
+        red = temp(1,:);
+        green = temp(2,:);
+        blue = temp(3,:);
+        temp = zeros(size(img,1),size(img,2));
+
+        sepia = zeros(size(img,1),size(img,2),size(img,3));
+        temp(:) = red;
+        sepia(:,:,1) = temp;
+        temp(:) = green;
+        sepia(:,:,2) = temp;
+        temp(:) = blue;
+        sepia(:,:,3) = temp;
     end
 end
 
