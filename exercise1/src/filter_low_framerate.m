@@ -20,12 +20,15 @@
 %       .....
 function video = filter_low_framerate(video, source_fps, target_fps)
 
+    % persistant array in memory for this function
+    persistent double_frame;
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check if we process the first frame and init filter 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if (~isfield(video, 'filter_low_framerate'))
         video.filter_low_framerate.start_frame = video.start_frame;
-        % init filter once
+        % init array once
         double_frame = zeros(1, source_fps);
         % if framerates do not match
         if (source_fps ~= target_fps)
@@ -42,12 +45,16 @@ function video = filter_low_framerate(video, source_fps, target_fps)
             end
         end
         % show me the array
-        double_frame
+        %double_frame
+    else
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % do for every frame
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        my_frame_nr = video.frame(1).original_frame_nr;
+        dropFlag = double_frame(mod(my_frame_nr-1, source_fps)+1);
+        if (dropFlag == 1)
+            video.frame(1).filtered = video.frame(2).filtered;
+        end
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % do for every frame 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-
 end
