@@ -16,7 +16,7 @@
 %       .....
 %
 %   PHYSICAL BACKGROUND:
-%       .....
+%       Sepia-Effect: Processed through a silver sulfide ferrocyanide or uranium ferrocyanide solution
 function [video] = filter_remove_color(video, mode)    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
