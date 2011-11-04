@@ -13,7 +13,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%       .....
+%       For converting the image into a black and white (grayscale)
+%       representation the image is first converted from the (original) RGB
+%       colorspace to the HSV (Hue,Saturation,Value) colorspace. In this
+%       colorspace a saturation value of 0 means no colorfulness. So we set
+%       the staturation value of every color triple to 0 and get a
+%       grayscale image. We then convert the image from the HSV colorspace
+%       back to RGB colorspace.
+%       For converting the image into a sepia colorspace we mutliply each
+%       RGB color with a sepia value 3x3 matrix (from the left side)
+%       resulting in an RGB triple lying in the "new" sepia colorspace 
+%       (still normal RGB representation).
 %
 %   PHYSICAL BACKGROUND:
 %       Sepia-Effect: Processed through a silver sulfide ferrocyanide or uranium ferrocyanide solution
@@ -98,5 +108,3 @@ function [video] = filter_remove_color(video, mode)
         sepia(:,:,3) = temp;
     end
 end
-
-

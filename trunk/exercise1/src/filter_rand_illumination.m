@@ -12,13 +12,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%       .....
+%       First a random luma_factor value between min_brightness and
+%       max_brightness is calculated. The image is converted into the HSV
+%       colorspace in which VALUE represents the brightness of a color. We
+%       now dampen the colors brightness by multiplying each colors VALUE
+%       value by the luma_factor. This way the whole image is made darker
+%       by the random luma_factor. After that we convert the image back to
+%       the RGB colorspace.
 %
 %   PHYSICAL BACKGROUND:
 %       .....
 %
 %   RANGE VALUES FOR PARAMETERS:
-%       .....
+%       Values for min_brightness and may_brighness can range from 0.0 to
+%       1.0 but max_brightness has to be larger then min_brightness.
 function video = filter_rand_illumination(video, min_brightness, max_brightness)
     % Generate a random value luma_factor
     luma_factor = min_brightness + (max_brightness - min_brightness) * rand(1);
