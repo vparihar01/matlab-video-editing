@@ -25,7 +25,10 @@
 %       .....
 %
 %   PHYSICAL BACKGROUND:
-%       .....
+%       Iris effect (in films) is caused by an (iris-) aperture.
+%       The aperture of an optical system is the opening that determines 
+%       the cone angle of a bundle of rays that come to a focus in the 
+%       image plane.
 %
 %   RANGE VALUES FOR PARAMETERS:
 %       .....
