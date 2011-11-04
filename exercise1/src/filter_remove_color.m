@@ -26,7 +26,16 @@
 %       (still normal RGB representation).
 %
 %   PHYSICAL BACKGROUND:
-%       Sepia-Effect: Processed through a silver sulfide ferrocyanide or uranium ferrocyanide solution
+%       Black and white: A black and white picture is the result of light
+%           rays hitting a thin plastic strip. This strip is on one side 
+%           covered with an emulsion with chemicals (f.i. silver bromide)
+%           on it, which alter if light is shined on them 
+% 
+%       Sepia-Effect: Either the film makers used pre-tintet stocks or they 
+%           put emulsion on the film (silver sulfide ferrocyanide or 
+%           uranium ferrocyanide solution, which causes it to change the
+%           gray values in a brown tone.
+% 
 function [video] = filter_remove_color(video, mode)    
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
