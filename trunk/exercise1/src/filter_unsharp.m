@@ -24,13 +24,14 @@
 %       blurred. The circle of confusion (CoC) is then larger than one
 %       pixel. Normally this depends on the distance of an object but we
 %       blur the whole image as an approximation. In the early days optical
-%       systems were not that accuarate and things like autofocus did not
+%       systems were not that accurate and things like autofocus did not
 %       exist so a lot of things were out of focus and blurry.
 %
 %   RANGE VALUES FOR PARAMETERS:
 %       filterSize is the dimension of the filterKernel square matrix and
 %       should be odd > 1 to have a nice filterkernel (3, 5, 7 and so on).
 %       sigma is the standard deviation an should be a positive value.
+% 
 function video = filter_unsharp(video, filterSize, sigma)
     filterkernel = fspecial('gaussian', filterSize, sigma);
     video.frame(1).filtered = imfilter(video.frame(1).filtered, filterkernel,'replicate', 'same', 'conv');
