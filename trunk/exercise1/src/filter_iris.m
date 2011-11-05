@@ -31,7 +31,13 @@
 %       image plane.
 %
 %   RANGE VALUES FOR PARAMETERS:
-%       .....
+%       trans_size <= iris_size
+%       -imgwidth/2 < dist_x < +imgwidth/2
+%       -imgheight/2 < dist y < +imgheight/2
+%       min_size > 0
+%       max_size <= imgwidth
+%       max_size > min_size
+% 
 function video = filter_iris(video, transition_size, min_size, max_size, dist_x, dist_y);   
     % create a distance map, with distances from the center of the iris
     [dist_map,maxDist] = distance_map(size(video.frame(1).filtered,1),size(video.frame(1).filtered,2), dist_x, dist_y);
