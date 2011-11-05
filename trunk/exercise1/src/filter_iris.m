@@ -91,7 +91,6 @@ function video = filter_iris(video, transition_size, min_size, max_size, dist_x,
         
         for j=1:size(indices)
             map(indices(j)) = 1 + temp*(dist_map(indices(j))-clearView_size);
-            disp(map(indices(j)));
         end
         
         map = map + white;
