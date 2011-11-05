@@ -21,11 +21,15 @@
 %       the RGB colorspace.
 %
 %   PHYSICAL BACKGROUND:
-%       .....
+%       The "darker" appearance of films in the 20s is
+%       caused by less ellaborated lightening technics and light sources
+%       they used as well by the fact that the monochromatic film stock 
+%       was less sensitive on the incoming light rays than nowadays.
 %
 %   RANGE VALUES FOR PARAMETERS:
 %       Values for min_brightness and may_brighness can range from 0.0 to
 %       1.0 but max_brightness has to be larger then min_brightness.
+% 
 function video = filter_rand_illumination(video, min_brightness, max_brightness)
     % Generate a random value luma_factor
     luma_factor = min_brightness + (max_brightness - min_brightness) * rand(1);
