@@ -34,8 +34,8 @@
 %       trans_size <= iris_size
 %       -imgwidth/2 < dist_x < +imgwidth/2
 %       -imgheight/2 < dist y < +imgheight/2
-%       min_size > 0
-%       max_size <= imgwidth
+%       min_size >= 0
+%       max_size <= 1
 %       max_size > min_size
 % 
 function video = filter_iris(video, transition_size, min_size, max_size, dist_x, dist_y);   
