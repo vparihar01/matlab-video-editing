@@ -22,7 +22,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%       .....
+%       1) Calculate the distance map and max. distance from the iris
+%       center
+%       2) Choose (randomly) a value between min_size and max_size for the
+%       iris size (diameter) relative to the frame width, calculate the
+%       value for the radius, calculate the radius of the clearly viewed
+%       area
+%       3) Calculate the brightness map, the values between the
+%       clearView_size and the iris_size are calculated with linear
+%       interpolation. 
+%       4) Multiply the color channels with thew brightness map
 %
 %   PHYSICAL BACKGROUND:
 %       Iris effect (in films) is caused by an (iris-) aperture.
