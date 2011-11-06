@@ -30,17 +30,29 @@ function video = filter_highcontrast(video, dx, dy)
     % map intensity(V=VALUE) values to [0..255]
     img(:,:,3) = img(:,:,3) * 255;
     % map each intensity value with the stepfunction
-    k1 = (dy/dx)*255;
-    k2 = ((1-2*dy)/(1-2*dx))*255;
-    intensities = zeros(size(img,1),size(img,2),3);
-    intensities(:,:,1) = (img(:,:,3) <= (dx*255)) .* img(:,:,3);
-    intensities(:,:,2) = ((img(:,:,3) < ((1-dx)*255)) .* img(:,:,3) ) - intensities(:,:,1);
-    intensities(:,:,3) = img(:,:,3) - intensities(:,:,2);
+    k1 = dy/dx;
+    k2 = (1-2*dy)/(1-2*dx);
     
-    intensities(:,:,1) = intensities(:,:,1) * k1;
-    intensities(:,:,2) = (intensities(:,:,2) * k2) + (dy*255);
-    intensities(:,:,3) = (intensities(:,:,3) * k1) + ((1-dy)*255);
+    intensities = zeros(size(img,1),size(img,2),3);
+    intensity = img(:,:,3);
+    indices1 = find(intensity <= (dx*255));
+    indices2 = find( intensity >(dx*255) & intensity < ((1-dx)*255));
+    indices3 = find( intensity >= ((1-dx)*255) & intensity <= 255);
+    
+    temp = zeros(size(img,1),size(img,2));
+    temp(indices1) = intensity(indices1) * k1;
+    intensities(:,:,1) = temp;
+    
+    temp = zeros(size(img,1),size(img,2));
+    temp(indices2) = (intensity(indices2) - (dx*255)) * k2 + (dy*255);
+    intensities(:,:,2) = temp;
+    
+    temp = zeros(size(img,1),size(img,2));
+    temp(indices3) = (intensity(indices3) - ((1-dx)*255)) * k1 + ((1-dy)*255);
+    intensities(:,:,3) = temp;
+    
     img(:,:,3) = intensities(:,:,1) + intensities(:,:,2) + intensities(:,:,3);
+    
     % convert intensity(HS,V=VALUE) values back again to [0..1]
     img(:,:,3) = img(:,:,3) / 255;
     temp = img(:,:,3);
