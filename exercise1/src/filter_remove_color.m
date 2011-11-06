@@ -106,6 +106,12 @@ function [video] = filter_remove_color(video, mode)
         red = temp(1,:);
         green = temp(2,:);
         blue = temp(3,:);
+        
+        % correct values > 1 => 1
+        red(red > 1) = 1;
+        green(green > 1) = 1;
+        blue(blue > 1) = 1;
+        
         temp = zeros(size(img,1),size(img,2));
 
         sepia = zeros(size(img,1),size(img,2),size(img,3));
