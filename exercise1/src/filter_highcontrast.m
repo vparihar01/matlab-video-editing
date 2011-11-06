@@ -23,8 +23,14 @@
 %       back to the rgb colorspace.
 %
 %   PHYSICAL BACKGROUND:
-%       .....
-%
+%       In the 20s most of the films were produced with orthochromatic film
+%       stock, which are not sensitive to certain wavelengths of light.
+%       This fact resulted in some troubles in films: rendering blue skies
+%       as perpetually overcast, blond hair as washed-out, blue eyes nearly
+%       white, and red lips nearly black. To correct the rendering errors
+%       they tried to add special makeup, lens filters and lighting, 
+%       but never completely satisfactorily
+%       
 %   RANGE VALUES FOR PARAMETERS:
 %       0 < dx <= 0.5
 %       0 <= dy <= 0.5
