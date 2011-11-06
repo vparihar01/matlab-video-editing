@@ -144,14 +144,14 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
         % in the queue and are applied to every frame
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (video.frame(1).frame_nr ~= -1) 
+%             video      = filter_remove_color(video, 'bw');
 %             video      = filter_remove_color(video, 'sepia');
 %             video      = filter_unsharp(video, [5 5], 0.75);
 %             video      = filter_rand_illumination(video, 0.3, 0.9);
-             video      = filter_highcontrast(video, 0.2, 0.1);
-%  FALSCH           video      = filter_iris(video, trans_size, dist_x, dist_y, min_size, max_size);
-%              filter_iris(video, trans_size, min_size, max_size, dist_x, dist_y)
+%             video      = filter_highcontrast(video, 0.2, 0.1);
 %             video      = filter_iris(video, 50, 0.5, 0.95, 0, 0);
 %             video      = filter_low_framerate(video, 25, 7);
+            video      = filter_low_framerate(video, 25, 12);
         end
         
         
@@ -164,7 +164,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
             % SHOW ORIGINAL AND FINAL FRAME
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if (show == 1)
-                figure(1);                
+                figure(1);       
                 subplot(2,1,1);                
                 imshow(video.frame(end).original);            
                 title(sprintf('Input frame %d', video.frame(end).frame_nr));
@@ -178,7 +178,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
             warning off;
             imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
             warning on;
-            disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
+            disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));   
         end                       
     end
 end
