@@ -150,7 +150,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
             video      = filter_rand_illumination(video, 0.3, 0.9);
             video      = filter_highcontrast(video, 0.2, 0.1);
             video      = filter_iris(video, 50, 0.5, 0.95, 0, 0);
-            video      = filter_low_framerate(video, 25, 7);
+%             video      = filter_low_framerate(video, 25, 7);
         end
         
         
@@ -175,7 +175,7 @@ function exercise1(input_directory, output_directory, start_frame, end_frame)
             frame_number = int2str(video.frame(end).frame_nr); 
             frame_str    = '00000';  frame_str(end-numel(frame_number)+1:end) = frame_number;      
             warning off;
-            imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
+            imwrite(video.frame(end).filtered, sprintf('%s/CombinedExcLFR_frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
             warning on;
             disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));   
         end                       
