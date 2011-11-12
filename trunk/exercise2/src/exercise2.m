@@ -1,0 +1,206 @@
+% EXERCISE2 applies filters of excercise 2 on image sequence.
+%
+%   EXERCISE2(INPUT_DIRECTORY, OUTPUT_DIRECTORY) reads all files in
+%   the INPUT_DIRECTORIES with the name frameXXXX.png and applies the 
+%   implemented filters on these images. The finally processed frames 
+%   are stored in OUTPUT_DIRECTORY.
+%
+%   EXERCISE2({INPUT_DIRECTORY1, INPUT_DIRECTORY2}, OUTPUT_DIRECTORY) reads
+%   first all files in the INPUT_DIRECTORY1 and then all files in the
+%   INPUT_DIRECTORY2 with the name frameXXXX.png and applies the 
+%   implemented filters on these images. The finally processed frames 
+%   are stored in OUTPUT_DIRECTORY.
+%
+%   ABGABE2(INPUT_DIRECTORY, OUTPUT_DIRECTORY, START_FRAME, END_FRAME) only
+%   processes the images from START_FRAME to END_FRAME.
+%
+% Example 1:
+%   EXERCISE2('../images', '../output') processes all images frameXXXX.png in 
+%   '../images' and stores the output in '../output'.
+%
+% Example 2:
+%   EXERCISE2('../images', '../output', 1, 25) processes only frames 1 to 25.
+%
+% Example 3:
+%   EXERCISE2({'../images1','../images2'}, '../output') reads all images from
+%   2 input directories '../images1' and '../images2' (in this order) and 
+%   applies the filters on all images.
+function exercise2(input_directory, output_directory, start_frame, end_frame)
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SETTINGS
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    show = 1;   % show original and final frame output
+    close all;  % close all figures
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % INITIALIZE VIDEO STRUCTURE AND FILTERS
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    video.BUFFER_FRAMES     = 3;            % last X frames are buffered for temporal filters (frame(1) is current frame, frame(2) previous frame, ...)
+    video.frame             = [];           % initialize frame buffer
+    video.output_directory  = output_directory;
+    for i = 1:1:video.BUFFER_FRAMES
+        video.frame(i).original             = [];     % original frame content as RGB data (H x W x 3), this array is NOT modified by any filter!
+        video.frame(i).filtered             = [];     % filtered frame content as RGB data (H x W x 3), all filters use this array as input and output
+        video.frame(i).frame_nr             = -1;     % frame number of this frame (CAN CHANGE IF ADDITIONAL FRAMES ARE INSERTED/REMOVED BY A FILTER/EFFECT)
+        video.frame(i).scene                =  1;     % scene number (always 1 except told otherwise by our scene detection)  
+    end
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % READ ALL THE FILE NAMES IN A FOLDER ENDING ON .png 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+    video.input_files = [];
+    if (iscell(input_directory) == 0)
+        % single input directory  
+        add_list      = dir([input_directory '/*.png']); 
+        for j = 1:numel(add_list)
+            video.input_files(end+1).name             = [input_directory '/' add_list(j).name];
+            video.input_files(end).frame_nr  = numel(video.input_files);
+        end
+    else
+        % multiple input directories
+        for i = 1:numel(input_directory)
+            add_list      = dir([input_directory{i} '/*.png']); 
+            for j = 1:numel(add_list)
+                video.input_files(end+1).name             = [input_directory{i} '/' add_list(j).name];
+                video.input_files(end).frame_nr  = numel(video.input_files);
+            end
+        end    
+    end
+    
+    if (numel(video.input_files) == 0)
+        disp('No image files found in input directory.')
+        return;
+    end
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % OPTIONAL PARAMETERS
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    selected_input_frames = ones(1,numel(video.input_files));
+    if (exist('start_frame'))
+        selected_input_frames(1:start_frame-1) = 0;     
+    end
+    
+    if (exist('end_frame'))
+        if (end_frame < numel(video.input_files))
+            selected_input_frames(end_frame+1:end) = 0;
+        end
+    end
+
+    video.input_files = video.input_files(selected_input_frames == 1);
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % CREATE OUTPUT DIRECTORY
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    warning off;
+    if(~mkdir([video.output_directory])) 
+        disp(['Cannot create output directory [' video.output_directory ']']);
+        return;
+    end
+    warning on;
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % ADD/REMOVE FRAMES FROM THE ORIGINAL INPUT LIST (EXERCISE 2)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     video = effect_add_text(video, {{'../text/scene_text1.png', 1, 3}, ...     
+%                                    {'../text/scene_text1.png', 6, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
+%     
+%     video = effect_fast_motion(video, {{1, 10, 3}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
+%                                      {100, 25, 10}});          % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % START FRAME PROCESSING
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    for frame_counter = 1:numel(video.input_files)+video.BUFFER_FRAMES
+        
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % SHIFT FRAME BUFFER
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if (video.BUFFER_FRAMES > 1)
+            video.frame(2:end) = video.frame(1:end-1);
+        end        
+        
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % READ IN FRAMES
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if (frame_counter <= numel(video.input_files))
+            input_file                          = double(imread(video.input_files(frame_counter).name))./255;  % ORIGINAL IMAGE DATA -> NOT MODIFIED BY ANY FILTER
+            video.frame(1).original             = imresize(input_file, video.default_video_size, 'bilinear');
+            video.frame(1).filtered             = video.frame(1).original;                        % EACH FILTER USES THIS ARRAY AS INPUT AND FOR STORING ITS RESULTS 
+            video.frame(1).frame_nr             = frame_counter;                                                       
+            video.frame(1).scene                = 1;            
+            disp(sprintf('Adding frame [%d] to filter queue', video.frame(1).frame_nr));                        
+        else
+            % Here we flush the buffer after all files in the input list have been processed - not further frames are read in 
+            video.frame(1).original             = [];
+            video.frame(1).filtered             = [];
+            video.frame(1).frame_nr             = -1;
+            video.frame(1).scene                = 1;            
+        end        
+        
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % APPLY BASIC FILTERS (EXERCISE 1)
+        % These filters only work on the current frame 1 
+        % in the queue and are applied to every frame
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if (video.frame(1).frame_nr ~= -1) 
+%             video      = filter_remove_color(video, 'bw');
+%             video      = filter_unsharp(video, PARAM1, ...);
+%             video      = filter_rand_illumination(video, min_brightness, max_brightness);
+%             video      = filter_highcontrast(video, dx, dy);
+%             video      = filter_iris(video, trans_size, dist_x, dist_y, min_size, max_size);
+%             video      = filter_low_framerate(video, source_fps, dest_fps);          
+
+%             video = effect_scene_cut(video, ...);                  % OPTIONAL
+        end
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % APPLY EFFECTS (EXERCISE 2)
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        video = effect_irising_in_out(video, 60, 0.85, 0.80, 0, 0, {{1, 10}, ...
+%                                                                    {20,10}});      
+
+%        video = effect_soft_focus(video, 10, {{1, 10}, ...           % at frame X1 apply soft focus for Y1 frames
+%                                        {40, 10}});          % at frame X2 apply soft focus for Y2 frames
+
+
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % STORE FRAMES AT THE END OF PROCESSING BUFFER
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if (video.frame(end).frame_nr ~= -1)  
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % SHOW ORIGINAL AND FINAL FRAME
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if (show == 1)
+                figure(1);                
+                subplot(2,1,1);                
+                imshow(video.frame(end).original);            
+                title(sprintf('Input frame %d', video.frame(end).frame_nr));
+                subplot(2,1,2);
+                imshow(video.frame(end).filtered);
+                title(sprintf('Output frame %d', video.frame(end).frame_nr));
+            end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % SAVE FRAME 
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            frame_number = int2str(video.frame(end).frame_nr); 
+            frame_str    = '00000';  frame_str(end-numel(frame_number)+1:end) = frame_number;      
+            warning off;
+            imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
+            warning on;
+            disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
+        end        
+                
+    end
+
+end
