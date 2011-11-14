@@ -130,8 +130,7 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
         % READ IN FRAMES
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (frame_counter <= numel(video.input_files))
-            input_file                          = double(imread(video.input_files(frame_counter).name))./255;  % ORIGINAL IMAGE DATA -> NOT MODIFIED BY ANY FILTER
-            video.frame(1).original             = imresize(input_file, video.default_video_size, 'bilinear');
+            video.frame(1).original             = double(imread(video.input_files(frame_counter).name))./255;  % ORIGINAL IMAGE DATA -> NOT MODIFIED BY ANY FILTER
             video.frame(1).filtered             = video.frame(1).original;                        % EACH FILTER USES THIS ARRAY AS INPUT AND FOR STORING ITS RESULTS 
             video.frame(1).frame_nr             = frame_counter;                                                       
             video.frame(1).scene                = 1;            
