@@ -44,6 +44,8 @@ function video = effect_add_text(video, text)
     % Get positions/durations of text scenes
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    sizeText = size(text,1)
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Insert entries into video.input_files array
