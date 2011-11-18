@@ -36,17 +36,71 @@
 %       .....
 %   
 %   USE OF THE EFFECT:
-%       .....
+%       Early films were produced without sound, so they inserted frames
+%       with text to substitute spoken dialogs or additional information
+%       (f.i. scene numbers)
 %
 function video = effect_add_text(video, text)
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get positions/durations of text scenes
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    posDur = zeros(length(text),2);
+    
+    for i=1:size(text,2)
+        cellCache = text(1,i);
+        posDur(i,1) = cellCache{1}{2};
+        posDur(i,2) = cellCache{1}{3};
+    end
+    
+    %sort ascending regarding to the position of frame
+    posDur = sortrows(posDur);  
+    
+    %delete frames where frame number is bigger than original frameNumber
+    noFr = length(video.input_files);
+    [row, col] = find(posDur(:,1)>noFr);
+    
+    posDur = posDur(1:(row-1),:)
+   
+%%    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Insert entries into video.input_files array
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+%   Insert Frames in correct order
+    posInput = 0;
+    cachePosInput = 0;
+    for j=1:size(posDur,1)
+        inputStruct = struct('name',{},'frame_nr',{});
+        cnt2=0;
+        while(cnt2<posDur(j,2))
+            inputStruct(cnt2+1).name = text{j}{1};
+            inputStruct(cnt2+1).frame_nr = posDur(j,1)+cnt2;
+            cnt2 = cnt2+1;
+        end
+            
+        posInput = posDur(j,1)+cachePosInput;
+        cachePosInput = posDur(j,2);
+        
+        video.input_files = insertField(video.input_files,posInput,inputStruct);  
+        
+    end
+    
+        %% Testoutput
 
-    sizeText = size(text,1)
+    for iTest= 1:length(video.input_files)
+        iTest
+        frame = video.input_files(iTest).name
+    end
+    %     blub = length(video.input_files)
     
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Insert entries into video.input_files array
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% insert struct array into struct array 
+    function [output_struct] = insertField(input_struct, pos, fillin_struct)
+        output_struct = input_struct;
+        lengthFill = length(fillin_struct);
+        lengthFillin = length(fillin_struct);
+        lengthInput = length(input_struct);
+        outputLength =  lengthFill+lengthInput;
+        output_struct((pos+lengthFill):(outputLength)) = input_struct(pos:lengthInput);
+        output_struct(pos:(pos+lengthFillin-1)) = fillin_struct;
+    end
+end
