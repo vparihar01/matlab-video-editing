@@ -109,11 +109,16 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
     [video, posFrames] = effect_add_text(video, {{'D:/VVA/Exercise2/EXERCISE2/text/scene_text2.png', 6, 2}, ...     
                                    {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 1, 3}, ...
                                    {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 9, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
-                               
+
 %     video = effect_fast_motion(video, {{1, 10, 3}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
 %                                      {100, 25, 10}},...        % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
 %                                         posFrames);            % posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
-%     
+%
+ video = effect_fast_motion(video, {{1, 3, 1}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
+                                     {100, 25, 10},...        % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
+                                     {5, 4, 2}},...
+                                        posFrames);            % posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % START FRAME PROCESSING
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +141,7 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
             video.frame(1).filtered             = video.frame(1).original;                        % EACH FILTER USES THIS ARRAY AS INPUT AND FOR STORING ITS RESULTS 
             video.frame(1).frame_nr             = frame_counter;                                                       
             video.frame(1).scene                = 1;            
-            disp(sprintf('Adding frame [%d] to filter queue', video.frame(1).frame_nr));                        
+%             disp(sprintf('Adding frame [%d] to filter queue', video.frame(1).frame_nr));                        
         else
             % Here we flush the buffer after all files in the input list have been processed - not further frames are read in 
             video.frame(1).original             = [];
@@ -197,9 +202,9 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
             frame_number = int2str(video.frame(end).frame_nr); 
             frame_str    = '00000';  frame_str(end-numel(frame_number)+1:end) = frame_number;      
             warning off;
-            imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
+%             imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
             warning on;
-            disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
+%             disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
         end        
                 
     end
