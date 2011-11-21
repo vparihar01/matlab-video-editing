@@ -45,10 +45,6 @@ function video = effect_fast_motion(video, drop_frames, posFrames)
     indFramesOrig = find(posFrames<1);
     noOrigF = length(indFramesOrig);
     
-%     for test=1:length( video.input_files)
-%         video.input_files(test).name
-%     end
-    
     %create cell array with frames to drop, whose position is in the range
     %of original frames
     vectorDrop = [];
@@ -62,7 +58,7 @@ function video = effect_fast_motion(video, drop_frames, posFrames)
             noDelFrames = dur-dropFrames{cntDrop}{3};
             cntDrop = cntDrop+1;
 %           find frames to drop
-%           create array of indices to delete from
+%           create vector of indices where to delete frames
             indPartOrig = indFramesOrig(begin:(begin+dur-1));
             delete = [delFrames(indPartOrig, noDelFrames),delete]
         end
@@ -73,10 +69,6 @@ function video = effect_fast_motion(video, drop_frames, posFrames)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     video.input_files(delete)=[];
-
-    for test=1:length(video.input_files)
-        video.input_files(test).name
-    end
     
     %% Method for finding indices of frames to drop
 %   input: 
