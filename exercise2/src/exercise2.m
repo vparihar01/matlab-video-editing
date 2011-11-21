@@ -106,10 +106,10 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ADD/REMOVE FRAMES FROM THE ORIGINAL INPUT LIST (EXERCISE 2)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     video = effect_add_text(video, {{'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 6, 2}, ...     
-%                                    {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 1, 3}, ...
-%                                    {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 9, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
-%     
+    video = effect_add_text(video, {{'D:/VVA/Exercise2/EXERCISE2/text/scene_text2.png', 6, 2}, ...     
+                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 1, 3}, ...
+                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 9, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
+    
 %     video = effect_fast_motion(video, {{1, 10, 3}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
 %                                      {100, 25, 10}});          % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
     
