@@ -141,7 +141,7 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
             video.frame(1).filtered             = video.frame(1).original;                        % EACH FILTER USES THIS ARRAY AS INPUT AND FOR STORING ITS RESULTS 
             video.frame(1).frame_nr             = frame_counter;                                                       
             video.frame(1).scene                = 1;            
-%             disp(sprintf('Adding frame [%d] to filter queue', video.frame(1).frame_nr));                        
+            disp(sprintf('Adding frame [%d] to filter queue', video.frame(1).frame_nr));                        
         else
             % Here we flush the buffer after all files in the input list have been processed - not further frames are read in 
             video.frame(1).original             = [];
@@ -202,9 +202,9 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
             frame_number = int2str(video.frame(end).frame_nr); 
             frame_str    = '00000';  frame_str(end-numel(frame_number)+1:end) = frame_number;      
             warning off;
-%             imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
+            imwrite(video.frame(end).filtered, sprintf('%s/frame%s_scene%d.png', video.output_directory, frame_str, video.frame(end).scene));
             warning on;
-%             disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
+            disp(sprintf('Storing frame [%d]', video.frame(end).frame_nr));                        
         end        
                 
     end
