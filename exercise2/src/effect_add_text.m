@@ -49,7 +49,7 @@
 %
 function [video, posFrames] = effect_add_text(video, text)
 %%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get positions/durations of text scenes
+    % Get input_files/durations of text scenes
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      
 %   save position in the frame sequence, the duration & the original 
@@ -64,13 +64,15 @@ function [video, posFrames] = effect_add_text(video, text)
     end
     
     %sort ascending regarding to the position of frame
-    posDur = sortrows(posDur);  
+    posDur = sortrows(posDur);
     
     %delete frames where frame number is bigger than original frameNumber
     noFr = length(video.input_files);
     [row, col] = find(posDur(:,1)>noFr);
     
-    posDur = posDur(1:(row-1),:);
+    if(length(row)>0)
+        posDur = posDur(1:(row-1),:);
+    end
     
     %initialise array for saving positions of original frames and text frames
     cntTextFrames = noFr;
@@ -96,9 +98,9 @@ function [video, posFrames] = effect_add_text(video, text)
         end
             
         posInput = posDur(j,1)+cachePosInput;
-        cachePosInput = posDur(j,2);
+        cachePosInput = cachePosInput + posDur(j,2);
         
-        video.input_files = insertField(video.input_files,posInput,inputStruct);  
+        [video.input_files, posFrames] = insertField(video.input_files,posInput,inputStruct, posFrames);  
         
     end
     
@@ -111,7 +113,7 @@ function [video, posFrames] = effect_add_text(video, text)
 %     blub = length(video.input_files)
     
     %% insert text scenes struct array into original frame sequence struct array 
-    function [output_struct] = insertField(input_files, pos, fillin_struct)
+    function [output_struct, posFrames] = insertField(input_files, pos, fillin_struct,posFrames)
         output_struct = input_files;
         lengthFill = length(fillin_struct);
         lengthFillin = length(fillin_struct);
