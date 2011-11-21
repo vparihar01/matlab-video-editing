@@ -40,17 +40,18 @@
 %          column) and cut off not inserted elements
 %       2. create struct array with text frames (length = duration) and 
 %          insert into original frame sequence struct array 
+%       3. return array posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
 % 
 %   USE OF THE EFFECT:
 %       Early films were produced without sound, so they inserted frames
 %       with text to substitute spoken dialogs or additional information
 %       (f.i. scene numbers)
 %
-function video = effect_add_text(video, text)
-
+function [video, posFrames] = effect_add_text(video, text)
 %%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get positions/durations of text scenes
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
 %   save position in the frame sequence, the duration & the original 
 %   position in the text (cell) array
     posDur = zeros(length(text),3);
@@ -69,8 +70,15 @@ function video = effect_add_text(video, text)
     noFr = length(video.input_files);
     [row, col] = find(posDur(:,1)>noFr);
     
-    posDur = posDur(1:(row-1),:)
-   
+    posDur = posDur(1:(row-1),:);
+    
+    %initialise array for saving positions of original frames and text frames
+    cntTextFrames = noFr;
+    for k=1:size(posDur,1)
+        cntTextFrames = cntTextFrames+posDur(k,2);
+    end
+    posFrames = zeros(1,cntTextFrames);
+       
 %%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %     Insert entries into video.input_files array
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,13 +111,14 @@ function video = effect_add_text(video, text)
 %     blub = length(video.input_files)
     
     %% insert text scenes struct array into original frame sequence struct array 
-    function [output_struct] = insertField(input_struct, pos, fillin_struct)
-        output_struct = input_struct;
+    function [output_struct] = insertField(input_files, pos, fillin_struct)
+        output_struct = input_files;
         lengthFill = length(fillin_struct);
         lengthFillin = length(fillin_struct);
-        lengthInput = length(input_struct);
+        lengthInput = length(input_files);
         outputLength =  lengthFill+lengthInput;
-        output_struct((pos+lengthFill):(outputLength)) = input_struct(pos:lengthInput);
+        output_struct((pos+lengthFill):(outputLength)) = input_files(pos:lengthInput);
         output_struct(pos:(pos+lengthFillin-1)) = fillin_struct;
+        posFrames(pos:(pos+lengthFillin-1)) = 1;
     end
 end
