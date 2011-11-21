@@ -33,8 +33,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   
 %   IMPLEMENTATION:
-%       .....
-%   
+%       1. Save the position  and duration of the text frames and original 
+%          position of the text frames in text cell array, where the  
+%          position is smaller or equal than the original number of frames, 
+%          in the posDur Array. Sort in ascending order (regarding to first
+%          column) and cut off not inserted elements
+%       2. create struct array with text frames (length = duration) and 
+%          insert into original frame sequence struct array 
+% 
 %   USE OF THE EFFECT:
 %       Early films were produced without sound, so they inserted frames
 %       with text to substitute spoken dialogs or additional information
@@ -42,15 +48,18 @@
 %
 function video = effect_add_text(video, text)
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get positions/durations of text scenes
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    posDur = zeros(length(text),2);
+%   save position in the frame sequence, the duration & the original 
+%   position in the text (cell) array
+    posDur = zeros(length(text),3);
     
     for i=1:size(text,2)
         cellCache = text(1,i);
         posDur(i,1) = cellCache{1}{2};
         posDur(i,2) = cellCache{1}{3};
+        posDur(i,3) = i;
     end
     
     %sort ascending regarding to the position of frame
@@ -62,18 +71,18 @@ function video = effect_add_text(video, text)
     
     posDur = posDur(1:(row-1),:)
    
-%%    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     Insert entries into video.input_files array
+%%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %     Insert entries into video.input_files array
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-%   Insert Frames in correct order
+%   create struct array for every text sequence to insert to original frame sequence
     posInput = 0;
     cachePosInput = 0;
     for j=1:size(posDur,1)
         inputStruct = struct('name',{},'frame_nr',{});
         cnt2=0;
         while(cnt2<posDur(j,2))
-            inputStruct(cnt2+1).name = text{j}{1};
+            inputStruct(cnt2+1).name = text{posDur(j,3)}{1};
             inputStruct(cnt2+1).frame_nr = posDur(j,1)+cnt2;
             cnt2 = cnt2+1;
         end
@@ -87,13 +96,13 @@ function video = effect_add_text(video, text)
     
         %% Testoutput
 
-    for iTest= 1:length(video.input_files)
-        iTest
-        frame = video.input_files(iTest).name
-    end
-    %     blub = length(video.input_files)
+%     for iTest= 1:length(video.input_files)
+%         iTest
+%         frame = video.input_files(iTest).name
+%     end
+%     blub = length(video.input_files)
     
-    %% insert struct array into struct array 
+    %% insert text scenes struct array into original frame sequence struct array 
     function [output_struct] = insertField(input_struct, pos, fillin_struct)
         output_struct = input_struct;
         lengthFill = length(fillin_struct);
