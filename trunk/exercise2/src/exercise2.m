@@ -174,10 +174,8 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
         video = effect_irising_in_out(video, 60, 0.85, 0.80, 0, 0, {{1, 10}, ...
                                                                     {20,10}});
 
-        video = effect_soft_focus(video, 10, {{5, 3}, ...           % at frame X1 apply soft focus for Y1 frames
-                                        {17, 10}});          % at frame X2 apply soft focus for Y2 frames
-
-
+        video = effect_soft_focus(video, 10, {{5, 3}, ...          % at frame X1 apply soft focus for Y1 frames
+                                              {17, 10}});          % at frame X2 apply soft focus for Y2 frames
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % STORE FRAMES AT THE END OF PROCESSING BUFFER

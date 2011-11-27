@@ -17,18 +17,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%       .....   
+%       We look in the fades array and if the current frame number falls
+%       into the range of a defined fade range we set the boolean flag
+%       effectIsRunning to true.
+%       Furthermore we determine the start and end frame of the current
+%       fade range and calculate the duration of the closing/opening
+%       transistion. By using this duration knowledge we calculate the
+%       necessary irisStep that is necessary to open/close the iris in each
+%       frame through time.
+%       We check for everyframe if the flag effectIsRunning is set to true.
+%       If the effectIsRunning is set to true we have to distinguish 3
+%       cases:
+%           1) the iris is closing: we substract irisStep from the
+%              current iris_size and call the filter
+%           2) the iris is complete closed at halftime: we set the irisSize
+%              to 0 to ensure a completly closed iris.
+%           3) the iris is opening again: we add irisStep to the current
+%              iris_size and call the filter.
+%       If the effectIsRunning is set to false we call the iris filter with
+%       the default defined values.
 %   
 %   USE OF THE EFFECT:
-%       .....
+%       To make the transition between scenes more exiting,
+%       the iris was closed at the end of a scene and then reopened.
 % 
 function video = effect_irising_in_out(video, transition_size, min_size, max_size, dist_x, dist_y, fades)
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CHECK IF THE FRAMES WE WANT TO WORK ON ARE AVAILABLE IN QUEUE
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if (video.frame(1).frame_nr == -1)    
-        return; 
+    if (video.frame(1).frame_nr == -1)
+        return;
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,19 +69,41 @@ function video = effect_irising_in_out(video, transition_size, min_size, max_siz
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % GET THE IRISING PARAMETERS FOR THE CURRENT FRAME 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    fade = find((video.frame(1).frame_nr >= video.effect_irising_in_out.pos_start) & (video.frame(1).frame_nr <= video.effect_irising_in_out.pos_end));
-    fade_size = 1;
-    if (numel(fade) == 1)
-        ds          = pi/(video.effect_irising_in_out.duration(fade)-1);  % step size
-        diff        = (video.frame(1).frame_nr-video.effect_irising_in_out.pos_start(fade));
-        fade_size   = 1 - sin(ds*diff);
-        if (diff == round(video.effect_irising_in_out.duration(fade)/2))
-            fade_size = 0;
-        end
+    
+    effectIsRunning = false;
+    
+    for i = 1:numel(fades)
+        if ((video.frame(1).frame_nr >= video.effect_irising_in_out.pos_start(i)) && (video.frame(1).frame_nr <= video.effect_irising_in_out.pos_end(i)))
+            effectIsRunning = true;
+            % Determine the start and end frames of the effect
+            start_nr = video.effect_irising_in_out.pos_start(i);
+            end_nr = video.effect_irising_in_out.pos_end(i);
+            
+            % Determine parameters
+            duration = video.effect_irising_in_out.duration(i)/2;
+            irisStep = video.effect_irising_in_out.iris_size/duration;
+        end 
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % APPLY IRIS FILTER WITH IRISING PARAMETERS
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    iris_size   = video.effect_irising_in_out.iris_size * fade_size;
-    video = filter_iris(video, transition_size, iris_size, iris_size, dist_x, dist_y);
+    if (effectIsRunning)
+        % iris is closing
+        if ((end_nr - video.frame(1).frame_nr) > round(duration))
+            video.effect_irising_in_out.iris_size = video.effect_irising_in_out.iris_size - irisStep;
+            video = filter_iris(video, transition_size, video.effect_irising_in_out.iris_size, video.effect_irising_in_out.iris_size, dist_x, dist_y);
+        end
+        % iris is completly closed at halftime
+        if ((end_nr - video.frame(1).frame_nr) == round(duration))
+            video = filter_iris(video, transition_size, 0, 0, dist_x, dist_y);
+        end
+        % iris is opening again
+        if ((end_nr - video.frame(1).frame_nr) < round(duration))
+            video.effect_irising_in_out.iris_size = video.effect_irising_in_out.iris_size + irisStep;
+            video = filter_iris(video, transition_size, video.effect_irising_in_out.iris_size, video.effect_irising_in_out.iris_size, dist_x, dist_y);
+        end
+    else
+        % call the filter with default parameters
+        video = filter_iris(video, transition_size, min_size, max_size, dist_x, dist_y);
+    end
