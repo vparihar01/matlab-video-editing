@@ -41,24 +41,50 @@ function video = effect_soft_focus(video, blur_factor, focus)
         video.effect_soft_focus.pos_start = pos;
         video.effect_soft_focus.duration  = duration;    
         video.effect_soft_focus.pos_end   = pos+duration-1;
+        video.effect_soft_focus.focus_idx = 1;
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CHECK IF THE CURRENT FRAME IS PROCESSED BY THIS EFFECT 
     % (frame(x).frame_nr between pos(i) and pos(i)+duration(i)-1)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    index = video.effect_soft_focus.focus_idx;
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % GET THE FRAME DEPENDENT FOCUS PARAMETERS FOR THE BLUR FILTER
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % APPLY CIRCULAR AVERAGE FILTER WITH CHANGING RADIUS
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    if( index > numel(focus) )
+        return;
+    end
+    
+    pos_start = video.effect_soft_focus.pos_start(index);
+    pos_end = video.effect_soft_focus.pos_end(index);
+    
+    if( (video.frame(1).frame_nr >= pos_start) && ...
+        (video.frame(1).frame_nr <= pos_end) )
         
+        if( video.frame(1).frame_nr == pos_end )
+            video.effect_soft_focus.focus_idx = video.effect_soft_focus.focus_idx + 1;
+        end
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % GET THE FRAME DEPENDENT FOCUS PARAMETERS FOR THE BLUR FILTER
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        % linear interpolation
+        %y = y0 + ((x-x0)*y1 - (x-x0)*y0)/(x1-x0);
+        if( pos_end > pos_start )
+            frame_blur = blur_factor + (video.frame(1).frame_nr-pos_start) * ((0 - blur_factor)/((pos_end+1) - pos_start));
+        else
+            frame_blur = blur_factor;
+        end
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % APPLY CIRCULAR AVERAGE FILTER WITH CHANGING RADIUS
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        %%% video = filter_unsharp(video, [17 17], frame_blur);
+        filterkernel = fspecial('disk', frame_blur);
+        video.frame(1).filtered = imfilter(video.frame(1).filtered, filterkernel,'replicate', 'same', 'conv');
+
+    end  
  end
 
     

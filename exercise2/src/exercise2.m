@@ -106,18 +106,18 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ADD/REMOVE FRAMES FROM THE ORIGINAL INPUT LIST (EXERCISE 2)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    [video, posFrames] = effect_add_text(video, {{'D:/VVA/Exercise2/EXERCISE2/text/scene_text2.png', 6, 2}, ...     
-                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 1, 3}, ...
-                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 9, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
+%%%    [video, posFrames] = effect_add_text(video, {{'D:/VVA/Exercise2/EXERCISE2/text/scene_text2.png', 6, 2}, ...     
+%%%                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 1, 3}, ...
+%%%                                   {'D:/VVA/Exercise2/EXERCISE2/text/scene_text1.png', 9, 3}});     % add text frames at position X1 in original input files, text is displayed for Y1 frames
 
 %     video = effect_fast_motion(video, {{1, 10, 3}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
 %                                      {100, 25, 10}},...        % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
 %                                         posFrames);            % posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
 %
- video = effect_fast_motion(video, {{1, 3, 1}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
-                                     {100, 25, 10},...        % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
-                                     {5, 4, 2}},...
-                                        posFrames);            % posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
+%%% video = effect_fast_motion(video, {{1, 3, 1}, ...         % at frame 1 reduce the next 10 frames to 3 frames (randomly remove)
+%%%                                     {100, 25, 10},...        % at frame 100 reduce the next 25 frames to 10 frames (randomly remove) 
+%%%                                     {5, 4, 2}},...
+%%%                                        posFrames);            % posFrame = position of frames, 0=original input frame, 1= inserted text frames of effect_add_text
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % START FRAME PROCESSING
@@ -158,7 +158,7 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if (video.frame(1).frame_nr ~= -1) 
 %             video      = filter_remove_color(video, 'bw');
-%             video      = filter_unsharp(video, PARAM1, ...);
+%             video      = filter_unsharp(video, [17 17], 10);
 %             video      = filter_rand_illumination(video, min_brightness, max_brightness);
 %             video      = filter_highcontrast(video, dx, dy);
 %             video      = filter_iris(video, trans_size, dist_x, dist_y, min_size, max_size);
@@ -173,8 +173,8 @@ function exercise2(input_directory, output_directory, start_frame, end_frame)
 %        video = effect_irising_in_out(video, 60, 0.85, 0.80, 0, 0, {{1, 10}, ...
 %                                                                    {20,10}});      
 
-%        video = effect_soft_focus(video, 10, {{1, 10}, ...           % at frame X1 apply soft focus for Y1 frames
-%                                        {40, 10}});          % at frame X2 apply soft focus for Y2 frames
+        video = effect_soft_focus(video, 10, {{5, 3}, ...           % at frame X1 apply soft focus for Y1 frames
+                                        {17, 10}});          % at frame X2 apply soft focus for Y2 frames
 
 
         
