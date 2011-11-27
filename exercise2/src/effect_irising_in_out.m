@@ -24,14 +24,12 @@
 % 
 function video = effect_irising_in_out(video, transition_size, min_size, max_size, dist_x, dist_y, fades)
 
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CHECK IF THE FRAMES WE WANT TO WORK ON ARE AVAILABLE IN QUEUE
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if (video.frame(1).frame_nr == -1)    
         return; 
     end
-
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % INITIALIZE THE FILTER AT THE FIRST CALL
@@ -40,8 +38,8 @@ function video = effect_irising_in_out(video, transition_size, min_size, max_siz
         video.effect_irising_in_out.iris_size = rand(1) * [max_size - min_size] + min_size;                   % iris size
 
         for i = 1:numel(fades)
-            pos(i)       = fades{i}{1};         
-            duration(i)  = fades{i}{2}; 
+            pos(i)       = fades{i}{1};
+            duration(i)  = fades{i}{2};
         end
 
         video.effect_irising_in_out.pos_start = pos;
@@ -49,12 +47,22 @@ function video = effect_irising_in_out(video, transition_size, min_size, max_siz
         video.effect_irising_in_out.pos_end   = pos+duration-1;
     end
 
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % GET THE IRISING PARAMETERS FOR THE CURRENT FRAME 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    fade = find((video.frame(1).frame_nr >= video.effect_irising_in_out.pos_start) & (video.frame(1).frame_nr <= video.effect_irising_in_out.pos_end));
+    fade_size = 1;
+    if (numel(fade) == 1)
+        ds          = pi/(video.effect_irising_in_out.duration(fade)-1);  % step size
+        diff        = (video.frame(1).frame_nr-video.effect_irising_in_out.pos_start(fade));
+        fade_size   = 1 - sin(ds*diff);    
+        if (diff == round(video.effect_irising_in_out.duration(fade)/2))
+            fade_size = 0;
+        end
+    end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % APPLY IRIS FILTER WITH IRISING PARAMETERS
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    iris_size   = video.effect_irising_in_out.iris_size * fade_size;
+    video = filter_iris(video, transition_size, iris_size, iris_size, dist_x, dist_y);
