@@ -52,10 +52,10 @@ function video = filter_iris(video, transition_size, min_size, max_size, dist_x,
     [dist_map,maxDist] = distance_map(size(video.frame(1).filtered,1),size(video.frame(1).filtered,2), dist_x, dist_y);
     
     % calculate distances from iris center to the start and end of the transition area
-    iris_size = 0;    
-    while (iris_size < min_size || iris_size > max_size)
-        iris_size = rand;
-    end
+%    iris_size = 0;    
+%    while (iris_size < min_size || iris_size > max_size)
+        iris_size = rand * (max_size - min_size) + min_size;
+%    end
     
     iris_pixelRadius = (iris_size * size(dist_map,2))/2;
     clearViewDist = iris_pixelRadius - transition_size;
