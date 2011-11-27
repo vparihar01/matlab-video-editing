@@ -55,7 +55,7 @@ function video = effect_irising_in_out(video, transition_size, min_size, max_siz
     if (numel(fade) == 1)
         ds          = pi/(video.effect_irising_in_out.duration(fade)-1);  % step size
         diff        = (video.frame(1).frame_nr-video.effect_irising_in_out.pos_start(fade));
-        fade_size   = 1 - sin(ds*diff);    
+        fade_size   = 1 - sin(ds*diff);
         if (diff == round(video.effect_irising_in_out.duration(fade)/2))
             fade_size = 0;
         end
