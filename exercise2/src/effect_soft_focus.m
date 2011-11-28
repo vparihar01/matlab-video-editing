@@ -20,10 +20,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%       .....
+%       Look if the frame number of the current frame is between pos_start and
+%       pos_end of video.effect_soft_focus. video.effect_soft_focus
+%       contains the information of sets of frames which are going to get
+%       blurred. If the current frame number lies between pos_start and
+%       pos_end the blur factor for this frame is calculated by
+%       interpolating between pos_start and pos_end. 
+%       The calculated blur factor is used as the radius of a
+%       disk-filterkernel which is applied on the frame.
+%       The blur factor decreases towards pos_end.
 %  
 %   USE OF THE EFFECT:
-%       .....
+%       Used to draw attention to certain points in the film. (to enhance
+%       romantic or dreamy scenes)
 %
 function video = effect_soft_focus(video, blur_factor, focus)
 
