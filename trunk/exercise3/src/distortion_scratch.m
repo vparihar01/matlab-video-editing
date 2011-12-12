@@ -11,12 +11,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   IMPLEMENTATION:
-%   	.....
+%       generate random values done with matlab function randi
+%       - Generate a maximum number of scratches (< image width, empirically
+%       estimated),if the given nr_of_scratches is bigger than the max, 
+%       set to max_nr_scratches.
+%       - set nr_of_scratches to a random value between nr_of_scratches/2 
+%       and nr_of_scratches to generate a random number of scratches in every
+%       frame
+%       - generate 'nr_of_scratches times'  random (column)x-positions for 
+%       scratches and save in pos_scratches vector
+%       - generate intensity values for the previous calculated x-positions
+%       and save to pos_intensity matrix
+%       (intensity values randomly generated first half between 200 and 230
+%       second half between 50 and 80)
+%       - set range of intensity values from 0 to 1 instead of 1 to 255
+%       - replicate intensity vector of pos_intensity matrix 3 times (for
+%       every color component/channel. 
+%       and set intensity values in frame at positions from positions
+%       vector from pos_intensity matrix.
 %   
 %   PHYSICAL BACKGROUND:
-%       .....
-function video = distortion_scratch(video,nr_of_scratches)
+%      Scratches are typical damages of old movie films, and look like dark
+%      or bright vertical lines which run all over the frames of a video. 
+%      Black scratches are created during the shoot (perhaps by a dirty 
+%      gate) and appear on the negative as white lines. When the positive 
+%      print is made (the one you see in the theatre), the white becomes 
+%      black. White scratches are created on the print of the film after it
+%      has been run through too many dirty projectors and the emulsion is 
+%      scratched off.
 
+function video = distortion_scratch(video,nr_of_scratches)
 
     if(video.frame(1).frame_nr == -1)
         return
@@ -26,9 +50,14 @@ function video = distortion_scratch(video,nr_of_scratches)
     % Generate a maximum of nr_of_scratches 
     % scratches randomly on the whole image. 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    [r c f] = size(video.frame(1).original);
+    [r c f] = size(video.frame(1).original)
+    max_nr_scratches = round(c/40); 
+    if(nr_of_scratches>max_nr_scratches)
+        nr_of_scratches=max_nr_scratches;
+    end
+    
+    nr_of_scratches = randi([ceil(nr_of_scratches/2),nr_of_scratches]);
     pos_scratches = randi(c,1,nr_of_scratches);
-%     pos_scratches = [100,200,300,400,500,600]
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Generate half of nr_of scratches dark and half of
@@ -44,42 +73,18 @@ function video = distortion_scratch(video,nr_of_scratches)
     
     for i = 1:length_pos_int
         if(cnt<=length_pos_int_half)
-            pos_intensity(2,i) = randi([100, 200]);
+            pos_intensity(2,i) = randi([200, 230]);
         else
-            pos_intensity(2,i) = randi([0, 20]);
+            pos_intensity(2,i) = randi([50, 80]);
         end
         cnt = cnt+1;
     end
     
-%     pos_intensity = [100,200,300,400,500,600;0,5,50,100,200,230]
-%     pos_intensity = [100,200,300,400,500,600;0,1,2,100,200,230]
+    pos_intensity(2,:) = pos_intensity(2,:)/255;
+    intensity_multi = repmat(pos_intensity(2,:),[r 1 3]);
     
-pos_intensity
-    pos_int_multi = repmat(pos_intensity(2,:),[r 1 3]);
-%     size(pos_int_multi)
+    video.frame(1).filtered(:,pos_intensity(1,:),1:3)=  intensity_multi;
     
-% pos_int_multi(1,1,1)
-% pos_int_multi(1,1,2)
-% 
-% pos_int_multi(1:2,2,1)
-% pos_int_multi(1:2,3,1)
-% pos_int_multi(1:2,4,1)
-% pos_int_multi(1:2,5,1)
-% pos_int_multi(1:2,6,1)
-
-
-    video.frame(1).filtered(:,pos_intensity(1,:),1:3)=  pos_int_multi;
-
-%     video.frame(1).filtered(:,pos_intensity(1,1),1:3)=  pos_int_multi(:,1,:);
-%     video.frame(1).filtered(:,pos_intensity(1,2),1:3)=  pos_int_multi(:,2,:);
-%     video.frame(1).filtered(:,pos_intensity(1,3),1:3)=  pos_int_multi(:,3,:);
-%     video.frame(1).filtered(:,pos_intensity(1,4),1:3)=  pos_int_multi(:,4,:);
-%     video.frame(1).filtered(:,pos_intensity(1,5),1:3)=  pos_int_multi(:,5,:);
-%     video.frame(1).filtered(:,pos_intensity(1,6),1:3)=  pos_int_multi(:,6,:);
-%     video.frame(1).filtered(:,pos_intensity(1,1),1:3)=  50;
-%     video.frame(1).filtered(:,pos_intensity(1,2),1:3)=  1;
-%     video.frame(1).filtered(:,pos_intensity(1,4),1:3)=  0;
-%     video.frame(1).filtered(:,pos_intensity(1,5),1:3)=  100;
-%     video.frame(1).filtered(:,pos_intensity(1,6),1:3)=  50;
-
+    figure(2);
+    imshow(video.frame(1).filtered);
     
