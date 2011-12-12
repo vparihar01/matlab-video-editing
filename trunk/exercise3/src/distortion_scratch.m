@@ -12,33 +12,40 @@
 %
 %   IMPLEMENTATION:
 %       generate random values done with matlab function randi
-%       - Generate a maximum number of scratches (< image width, empirically
-%       estimated),if the given nr_of_scratches is bigger than the max, 
+%       - If the given nr_of_scratches is bigger than the max, 
 %       set to max_nr_scratches.
 %       - set nr_of_scratches to a random value between nr_of_scratches/2 
 %       and nr_of_scratches to generate a random number of scratches in every
 %       frame
-%       - generate 'nr_of_scratches times'  random (column)x-positions for 
-%       scratches and save in pos_scratches vector
+%       - generate random (column)x-positions for scratches and save in pos_scratches vector
 %       - generate intensity values for the previous calculated x-positions
-%       and save to pos_intensity matrix
-%       (intensity values randomly generated first half between 200 and 230
+%       and save to pos_intensity matrix(first half between 200 and 230
 %       second half between 50 and 80)
 %       - set range of intensity values from 0 to 1 instead of 1 to 255
-%       - replicate intensity vector of pos_intensity matrix 3 times (for
-%       every color component/channel. 
-%       and set intensity values in frame at positions from positions
-%       vector from pos_intensity matrix.
-%   
+%       - normalise intensity values replicate intensity vector of pos_intensity matrix 3 times (for
+%       every color component/channel and set intensity values of colums at 
+%       x-positions of pos_intensity matrix at the actual frame.
+%       - Paramter values: nr_of_scratches is the number of added vertical 
+%           scratches to the frames. This number can diversify from
+%           0 to the img width, because the film print can hypothetically
+%           be in a perfect shape or totally destroyed. We have chosen a
+%           max value of 15% of the image width, because otherwise the
+%           images won't be recognizeable any more         
 %   PHYSICAL BACKGROUND:
-%      Scratches are typical damages of old movie films, and look like dark
-%      or bright vertical lines which run all over the frames of a video. 
-%      Black scratches are created during the shoot (perhaps by a dirty 
-%      gate) and appear on the negative as white lines. When the positive 
-%      print is made (the one you see in the theatre), the white becomes 
-%      black. White scratches are created on the print of the film after it
-%      has been run through too many dirty projectors and the emulsion is 
-%      scratched off.
+%       How is it caused?
+%           Black scratches are created during the shoot (perhaps by a dirty 
+%           gate) and appear on the negative as white lines. When the positive 
+%           print is made (the one you see in the theatre), the white becomes 
+%           black. White scratches are created on the print of the film after it
+%           has been run through too many dirty projectors and the emulsion is 
+%           scratched off.
+%        Which movies are effected by these distortions?
+%           - Films that are recorded with a camera
+%           - Analog films played on (contaminated) projectors
+%        Can the distortion be avoided? If so, how?
+%           - Clean the gate of the camera perfectly
+%           - Clean the projector or to be really sure, only play it once on a
+%           projector and make a digital copy to play it more often.
 
 function video = distortion_scratch(video,nr_of_scratches)
 
