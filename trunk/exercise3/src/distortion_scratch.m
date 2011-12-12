@@ -51,7 +51,7 @@ function video = distortion_scratch(video,nr_of_scratches)
     % scratches randomly on the whole image. 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [r c f] = size(video.frame(1).original);
-    max_nr_scratches = round(c*0.15)
+    max_nr_scratches = round(c*0.15);
     if(nr_of_scratches>max_nr_scratches)
         nr_of_scratches=max_nr_scratches;
     end
