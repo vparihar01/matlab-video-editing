@@ -1,6 +1,0 @@
-KEEP it plain text (ISO OR UDF8)
-
-A text file, where you list all of the footage you have used. The file should look the following way:
-"title of the footage, year of the production", so f. e:
-Terminator 2 - Judgment Day, 1991
-Predator, 1988
